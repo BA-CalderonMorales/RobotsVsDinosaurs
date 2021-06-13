@@ -4,7 +4,6 @@ from weapon import Weapon
 
 
 class Robot:
-    health = 0
     def __init__(self, name):
         self.name = name
         self.power_level = 100
@@ -34,7 +33,7 @@ class Robot:
 
     def random_weapon(self):
         all_weapons = ["Shot gun", "Machine Gun", "Lazer", "Baseball Bat"]
-        weapon_levels = [10, 20, 30, 40] # Bats are op in my game
+        weapon_levels = [10, 20, 30, 40]  # Bats are op in my game
         rand = random.randint(0, 3)
         choice = self.find_weapon(all_weapons[rand], weapon_levels[rand])
         return choice

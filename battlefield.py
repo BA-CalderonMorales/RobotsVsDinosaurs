@@ -16,18 +16,15 @@ class BattleField:
         if self.game_status:
             print(self.display_welcome())
 
-            # Create the random dino with random properties
-            dino_types = ("Raptor", "Triceratops", "Tyrannosaurus")
-            attack_levels = (80, 75, 100)
+            # Create the random dinosaur herd
 
-            # Create the random robot with random properties
-            robot_types = ("Lightning-One", "Heavy-Two", "Omega-Three")
+            # Create the random robot fleet
 
             # Do something with this information.
 
 
     def display_welcome(self):
-        print("Welcome to the Robot - Dino Rumble!")
+        return "Welcome to Robots vs Dinosaurs!"
 
     def battle(self):
         pass
