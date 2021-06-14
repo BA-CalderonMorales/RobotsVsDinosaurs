@@ -91,6 +91,7 @@ class BattleField:
         """
         outcome = True  # Current status of the game
         rand = random.randint(0, 3)  # Assists with choosing a random opponent
+
         #  The user decides that they wish to be an ally of the dinosaurs
         if chosen_side.lower() == "dino":
             print("This is your randomly chosen dinosaur champion:\n")
@@ -126,13 +127,30 @@ class BattleField:
             print("This is your randomly chosen robot champion:\n")
             for index in range(0, len(self.robot_fleet)):
                 if index == rand:
-                    print(f"Your champion is: {self.robot_fleet[index].name}")
-                    self.store_robot_position = index
+                    print(f"{self.robot_fleet[index].name}")
+                    self.user_robot = self.robot_fleet[index]
                     break
-            print("Now that you have your champion, let's fight against the\n"
-                  "herd of dinosaurs!")
-
-            outcome = False  # New status of the game, False once winner decided
+            print("\n*******************************************************\n\n"
+                  "Now that you have your champion, let's fight against the\n"
+                  "herd of dinosaurs!\n")
+            print("You'll find your attack options below. Right now, you're \n"
+                  "up against the first dinosaur in the herd: ")
+            #  Create a new dinosaur herd, get the dino that is up first in the herd
+            new_dino_herd = Herd().create_herd()
+            for dino_pos in range(0, len(new_dino_herd)):
+                #  The self.opponent_current_position will be used whenever needed
+                #  to find the current dino that is battling.
+                if dino_pos == self.opponent_current_position:
+                    print("\n" + new_dino_herd[dino_pos].type)
+                    #  Set the initial dino opponent against the robot contender
+                    self.current_dino_opponent = new_dino_herd[dino_pos]
+                    break
+            #  Print out attack choices
+            print("\n*******************************************************\n\n"
+                  "Here are your attack choices:")
+            self.show_robo_opponent_options(self.current_dino_opponent, self.taunt)
+            # New status of the game, False once winner decided
+            outcome = False
         return outcome
 
     # endregion
@@ -179,65 +197,167 @@ class BattleField:
 
     # endregion
 
-    """# region Show_Robo_Opponent_Options
-    def show_robo_opponent_options(self, robot_or_dino_opponent, scare):
+    # region Show_Robo_Opponent_Options
+    def show_robo_opponent_options(self, opponent, scare):
         #  The robot_or_dino_opponent can be either a Robot() or a Dinosaur()
-        print("\n1. Use headbutt\n")
-        print("2. Use scratch\n")
-        print("3. Use intimidate\n"
+        #  In this case, robot_or_dino_opponent should be a Dinosaur()
+        print("\n1. Use blaster\n")
+        print("2. Use shockwave\n")
+        print("3. Use educate\n"
               "\n*******************************************************\n")
         type_of_attack = input(f"Enter one of the options above "
-                               f"to attack {robot_or_dino_opponent.name}:\n")
-        #  Headbutt - count will always equal 0 - reverts count to 0, if 1
+                               f"to attack {opponent.type}:\n")
+        #  Blaster - Reverts self.taunt to False
         if type_of_attack == "1":
             print("\n*******************************************************\n\n")
-            self.current_robot_opponent = robot_or_dino_opponent
-            self.dino_turn(robot_or_dino_opponent, 1)
-        #  Scratch - count will always equal 0 - reverts count to 0, if 1
+            self.current_dino_opponent = opponent
+            self.robo_turn(opponent, 1)
+        #  Shockwave - Reverts self.taunt to False
         elif type_of_attack == "2":
             print("\n*******************************************************\n\n")
-            self.dino_turn(robot_or_dino_opponent, 2)
-        #  Intimidate - count will only equal 0. Changes to 1, once used
+            self.robo_turn(opponent, 2)
+        #  Intimidate - Changes self.taunt to True.
         elif type_of_attack == "3" and scare == False:
             print(f"\n*******************************************************\n\n"
-                  f"{self.user_dinosaur.type} made their opponent spill some "
-                  f"oil. No damage caused, \nbut {self.current_robot_opponent.name} "
-                  f"is too scared to play their turn.")
+                  f"{self.user_robot.name} confused the dinosaur with modern"
+                  f", 21st century education. No damage caused, \n"
+                  f"but {self.current_dino_opponent.type} "
+                  f"is too confused to play their turn.")
             print("\nYou get to go again!")
             self.taunt = True
-            self.show_dino_opponent_options(robot_or_dino_opponent, self.taunt)
-        #  Disable Intimidate if used consecutively, where count is == 1
+            self.show_robo_opponent_options(opponent, self.taunt)
+        #  Disable Intimidate if used consecutively, self.taunt still equal to True
         elif type_of_attack == "3" and scare == True:
             print("\n*******************************************************\n\n"
                   "You cannot use that attack in a consecutive fashion. "
                   "You will have to choose another form of attacking.")
             #  Only choosing a different form of attack will let you change the scare
             #  parameter back to False.
-            self.show_dino_opponent_options(robot_or_dino_opponent, scare)
+            self.show_robo_opponent_options(opponent, scare)
         #  Invalid choice
         else:
             print("\n*******************************************************\n\n"
                   "That's not a type of attack. Enter a valid choice!!")
-
-    # endregion"""
+    # endregion
 
     # region Dino_Turn
     def dino_turn(self, robot_or_dino_opponent, number):
         if number == 1:
-            self.dino_option_one(robot_or_dino_opponent, number)
+            self.dino_option_one(robot_or_dino_opponent)
         elif number == 2:
-            self.dino_option_two(robot_or_dino_opponent, number)
+            self.dino_option_two(robot_or_dino_opponent)
 
     # endregion
 
     # region Robo_Turn
-    def robo_turn(self):
-        pass
+    def robo_turn(self, robot_or_dino_opponent, number):
+        if number == 1:
+            self.robo_option_one(robot_or_dino_opponent)
+        elif number == 2:
+            self.robo_option_two(robot_or_dino_opponent)
 
     # endregion
 
+    # region Helper method for robo_turn(self, robot_or_dino_opponent, number) - Blaster
+    def robo_option_one(self, opponent):
+        # Print the type of attack
+        print(f"{self.user_robot.name} attacked with their {self.user_robot.weapon.type}!\n")
+        random_damage = random.randint(0, 30)  # The damage will be any number between 0 and 30
+        opponent.injury(random_damage)  # Injure the robot
+        #  Set the incoming robot_or_dino opponent object = to the current robot fighting
+        self.current_dino_opponent = opponent  # Assign to correct opponent object
+
+        #  If the robots health and the dinosaur's health are both above 0, keep playing
+        if self.current_dino_opponent.health > 0 and self.user_robot.health > 0:
+            #  If the dino health and robot health are both above 0, and the user chooses num 1:
+            print(f"Now, {opponent.type} has only "
+                  f"{opponent.health} health!")  # Dino health
+            print(f"It's now {opponent.type}'s turn to"
+                  f" attack!")  # Dino turn to attack
+            opponent.attack(self.user_robot)  # Dino attack (automatic)
+            #  Outcome of last dino attack on robot
+            print(f"{self.user_robot.name}'s current health is: {self.user_robot.health}")
+            if self.taunt == True:
+                self.taunt = False
+                self.show_robo_opponent_options(self.current_dino_opponent, self.taunt)
+            else:
+                # self.taunt is already False, no change necessary
+                self.show_robo_opponent_options(self.current_dino_opponent, self.taunt)
+
+        #  The opponent's health is less than or equal to 0:
+        elif self.current_dino_opponent.health <= 0 and self.user_robot.health > 0:
+            #  Notify the user that the robot is destroyed and find the next one.
+            print("The dinosaur has been obliterated! On to the next one!")
+            self.user_current_position = self.user_current_position + 1  # Get the next position
+
+            #  Create a new robot contender, only if the current position is less than the size of fleet
+            if self.user_current_position < len(self.dino_herd):
+                new_dino_fighter = self.new_dino_opponent(self.user_current_position)
+                self.taunt == False  # Update the taunt to False
+                self.user_dinosaur.health = 100  # Update the health bar
+                self.show_robo_opponent_options(new_dino_fighter, self.taunt)  # Pass the variables in
+            else:
+                self.winner = self.user_robot.name
+                self.display_winners()
+
+        #  The robot's health is less than or equal to 0, END GAME
+        elif self.user_robot.health <= 0:
+            print("\nLooks like you lost, bud! Try again next time.")
+            self.winner = self.current_dino_opponent.type
+            self.display_winners()
+    # endregion
+
+    # region Helper method for robo_turn(self, robo_or_dino_opponent, number) - Shockwave
+    def robo_option_two(self, opponent):
+        # Print the type of attack
+        print(f"{self.user_robot.name} attacked with shockwave!\n")
+        random_damage = random.randint(0, 30)  # The damage will be any number between 0 and 30
+        opponent.injury(random_damage)  # Injure the robot
+        #  Set the incoming robot_or_dino opponent object = to the current robot fighting
+        self.current_dino_opponent = opponent  # Assign to correct opponent object
+
+        #  If the robots health and the dinosaur's health are both above 0, keep playing
+        if self.current_dino_opponent.health > 0 and self.user_robot.health > 0:
+            #  If the dino health and robot health are both above 0, and the user chooses num 1:
+            print(f"Now, {opponent.type} has only "
+                  f"{opponent.health} health!")  # Dino health
+            print(f"It's now {opponent.type}'s turn to"
+                  f" attack!")  # Dino turn to attack
+            opponent.attack(self.user_robot)  # Dino attack (automatic)
+            #  Outcome of last dino attack on robot
+            print(f"{self.user_robot.name}'s current health is: {self.user_robot.health}")
+            if self.taunt == True:
+                self.taunt = False
+                self.show_robo_opponent_options(self.current_dino_opponent, self.taunt)
+            else:
+                # self.taunt is already False, no change necessary
+                self.show_robo_opponent_options(self.current_dino_opponent, self.taunt)
+
+        #  The opponent's health is less than or equal to 0:
+        elif self.current_dino_opponent.health <= 0 and self.user_robot.health > 0:
+            #  Notify the user that the robot is destroyed and find the next one.
+            print("The dinosaur has been obliterated! On to the next one!")
+            self.user_current_position = self.user_current_position + 1  # Get the next position
+
+            #  Create a new robot contender, only if the current position is less than the size of fleet
+            if self.user_current_position < len(self.dino_herd):
+                new_dino_fighter = self.new_dino_opponent(self.user_current_position)
+                self.taunt == False  # Update the taunt to False
+                self.user_dinosaur.health = 100  # Update the health bar
+                self.show_robo_opponent_options(new_dino_fighter, self.taunt)  # Pass the variables in
+            else:
+                self.winner = self.user_robot.name
+                self.display_winners()
+
+        #  The robot's health is less than or equal to 0, END GAME
+        elif self.user_robot.health <= 0:
+            print("\nLooks like you lost, bud! Try again next time.")
+            self.winner = self.current_dino_opponent.type
+            self.display_winners()
+    # endregion
+
     #  region Helper method for dino_turn(self, robot_or_dino_opponent, number) - Headbutt
-    def dino_option_one(self, opponent, number):
+    def dino_option_one(self, opponent):
         print(f"{self.user_dinosaur.type} attacked with headbutt!\n")  # Print the type of attack
         random_damage = random.randint(0, 30)  # The damage will be any number between 0 and 30
         opponent.injury(random_damage)  # Injure the robot
@@ -282,10 +402,10 @@ class BattleField:
             print("\nLooks like you lost, bud! Try again next time.")
             self.winner = self.current_robot_opponent.name
             self.display_winners()
-    # endregion -
+    # endregion
 
     # region Helper method for dino_turn(self, robot_or_dino_opponent, number) - Scratch
-    def dino_option_two(self, opponent, number):
+    def dino_option_two(self, opponent):
         print(f"{self.user_dinosaur.type} attacked with scratch!\n")  # Print the type of attack
         random_damage = random.randint(0, 30)  # The damage will be any number between 0 and 30
         opponent.injury(random_damage)  # Injure the robot
@@ -349,11 +469,11 @@ class BattleField:
 
     # region New Dinosaur Herd()
     def new_dino_opponent(self, position):
-        result_dino = Dinosaur("")
+        result_dino = Dinosaur("", 0)
         new_dino_herd = Herd().create_herd()
         for dino_pos in range(0, len(new_dino_herd)):
             if dino_pos == position:
-                print("\n" + new_dino_herd[dino_pos].name + "\n")
+                print("\n" + new_dino_herd[dino_pos].type + "\n")
                 #  Set the initial dino opponent against the robot contender
                 result_dino = new_dino_herd[dino_pos]
                 break
@@ -363,11 +483,9 @@ class BattleField:
 
     # region Display_Winners
     def display_winners(self):
-        the_winner = f"\n\nLooks like there are no more opponents left to fight!\n" \
-                     f"The winner of the Robot vs Dinosaurs game is: {self.winner}\n" \
-                     f"Nice job taking out all of your enemies! \n\nFeel free to " \
-                     f"try again to see if you can beat the game \ntwo times in " \
-                     f"a row!"
+        the_winner = f"The winner of the Robot vs Dinosaurs game is: {self.winner}\n" \
+                     f"\n\nFeel free to try the game again to see if you get another \n" \
+                     f"outcome!"
         print(f"{the_winner}\n\nEND GAME")
     # endregion
 

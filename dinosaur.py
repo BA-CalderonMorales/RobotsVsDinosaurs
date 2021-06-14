@@ -1,11 +1,12 @@
 # region Dinosaur class
 class Dinosaur:
     # region Constructor
-    def __init__(self, type, attack_power):
-        self.type = type
+    def __init__(self, dino_type, attack_power):
+        self.type = dino_type
         self.power_level = attack_power
-        self.energy = 100
         self.health = 100
+        self.energy = 100
+
     # endregion
 
     # region Attack
