@@ -309,11 +309,11 @@ class BattleField:
             print(f"The next robot in your fleet is: {self.user_robot.name}")
             self.taunt = False
             self.current_dino_opponent.health = 100
-            self.show_robot_opponent_options(self.current_dino_opponent, self.taunt)
+            self.show_robo_opponent_options(self.current_dino_opponent, self.taunt)
         #  The robot's health is less than or equal to 0, END GAME
         elif self.user_robot.health <= 0:
             print("\nLooks like you lost, bud! Try again next time.")
-            self.winner = self.current_dino_opponent.type
+            self.winner = "Dinosaurs"
             self.display_winners()
     # endregion
 
@@ -371,11 +371,11 @@ class BattleField:
             print(f"The next robot in your fleet is: {self.user_robot.name}")
             self.taunt = False
             self.current_dino_opponent.health = 100
-            self.show_robot_opponent_options(self.current_dino_opponent, self.taunt)
+            self.show_robo_opponent_options(self.current_dino_opponent, self.taunt)
         #  The robot's health is less than or equal to 0, END GAME
         elif self.user_robot.health <= 0:
             print("\nLooks like you lost, bud! Try again next time.")
-            self.winner = self.current_dino_opponent.type
+            self.winner = "Dinosaurs"
             self.display_winners()
     # endregion
 
@@ -423,7 +423,8 @@ class BattleField:
                 self.display_winners()
 
         #  The dinosaur's health is less than or equal to 0, and there are still dinosaurs in the herd
-        elif self.user_dinosaur.health <= 0 and self.dino_herd[self.user_current_position + 1].type != "EndGame":
+        elif self.user_dinosaur.health <= 0 \
+                and self.dino_herd[self.user_current_position + 1].type != "EndGame":
             print(f"It appears that {self.dino_herd[self.user_current_position].type} has fallen!")
             self.user_current_position = self.user_current_position + 1
             self.user_dinosaur = self.dino_herd[self.user_current_position]
@@ -433,9 +434,9 @@ class BattleField:
             self.taunt = False
             self.current_robot_opponent.health = 100  # Update the health bar                 -------
             self.show_dino_opponent_options(self.current_robot_opponent, self.taunt)
-
         #  The dinosaur's health is less than or equal to 0, END GAME
-        elif self.user_dinosaur.health <= 0 and self.dino_herd[self.user_current_position + 1].type == "EndGame":
+        elif self.user_dinosaur.health <= 0 \
+                and self.dino_herd[self.user_current_position + 1].type == "EndGame":
             print("\nLooks like you you're out of dinosaurs, bud! Try again next time.")
             self.winner = "Robots"
             self.display_winners()
