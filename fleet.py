@@ -11,7 +11,7 @@ class Fleet:
     def create_fleet(self):
         """Create the fleet of robots"""
         fleet_of_robots = list()
-        all_names = ["Lightning", "Heafty", "Omega", "Zulu"]
+        all_names = ["Lightning", "Heafty", "Omega", "Zulu", "EndGame"]
         for index in range(0, len(all_names)):
             fleet_of_robots.append(Robot(all_names[index]))
         return fleet_of_robots

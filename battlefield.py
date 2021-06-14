@@ -90,19 +90,17 @@ class BattleField:
         :return: The outcome/status of the game. False when winner is declared.
         """
         outcome = True  # Current status of the game
-        rand = random.randint(0, 3)  # Assists with choosing a random opponent
 
         #  The user decides that they wish to be an ally of the dinosaurs
         if chosen_side.lower() == "dino":
-            print("This is your randomly chosen dinosaur champion:\n")
-            for index in range(0, len(self.dino_herd)):
-                if index == rand:
-                    print(f"{self.dino_herd[index].type}")
+            print("This is your dinosaur herd:\n")
+            for index in range(0, len(self.dino_herd) - 1):
+                print(f"{self.dino_herd[index].type}")
+                if index == self.user_current_position:
                     self.user_dinosaur = self.dino_herd[index]
-                    break
-            print("\n*******************************************************\n\n"
-                  "Now that you have your champion, let's fight against the\n"
-                  "fleet of robots!\n")
+            print(f"\n*******************************************************\n\n"
+                  f"Your first champion up to bat is {self.user_dinosaur.type}.\n"
+                  f"Let's fight against the fleet of evil robots!\n")
             print("You'll find your attack options below. Right now, you're \n"
                   "up against the first robot in the fleet: ")
             #  Create a new robot fleet, get the robot that is up first in the fleet
@@ -125,11 +123,11 @@ class BattleField:
         # The user decides that they wish to be an ally of the robots
         elif chosen_side.lower() == "robot":  # outcome will be false, always.
             print("This is your randomly chosen robot champion:\n")
-            for index in range(0, len(self.robot_fleet)):
+            """for index in range(0, len(self.robot_fleet)):
                 if index == rand:
                     print(f"{self.robot_fleet[index].name}")
                     self.user_robot = self.robot_fleet[index]
-                    break
+                    break"""
             print("\n*******************************************************\n\n"
                   "Now that you have your champion, let's fight against the\n"
                   "herd of dinosaurs!\n")
@@ -238,6 +236,7 @@ class BattleField:
         else:
             print("\n*******************************************************\n\n"
                   "That's not a type of attack. Enter a valid choice!!")
+
     # endregion
 
     # region Dino_Turn
@@ -305,6 +304,7 @@ class BattleField:
             print("\nLooks like you lost, bud! Try again next time.")
             self.winner = self.current_dino_opponent.type
             self.display_winners()
+
     # endregion
 
     # region Helper method for robo_turn(self, robo_or_dino_opponent, number) - Shockwave
@@ -354,6 +354,7 @@ class BattleField:
             print("\nLooks like you lost, bud! Try again next time.")
             self.winner = self.current_dino_opponent.type
             self.display_winners()
+
     # endregion
 
     #  region Helper method for dino_turn(self, robot_or_dino_opponent, number) - Headbutt
@@ -385,22 +386,36 @@ class BattleField:
         elif self.current_robot_opponent.health <= 0 and self.user_dinosaur.health > 0:
             #  Notify the user that the robot is destroyed and find the next one.
             print("The robot has been destroyed! On to the next one!")
-            self.user_current_position = self.user_current_position + 1  # Get the next position
+            self.opponent_current_position = self.opponent_current_position + 1  # Get the next position
 
             #  Create a new robot contender, only if the current position is less than the size of fleet
-            if self.user_current_position < len(self.robot_fleet):
-                new_robot_fighter = self.new_robot_opponent(self.user_current_position)
-                self.taunt == False  # Update the taunt to False
-                self.user_dinosaur.health = 100  # Update the health bar
+            if self.opponent_current_position < len(self.robot_fleet) \
+                    and self.robot_fleet[self.opponent_current_position].name != "EndGame":
+                new_robot_fighter = self.new_robot_opponent(self.opponent_current_position)
+                self.taunt = False  # Update the taunt to False
+                self.user_dinosaur.health = 25  # Update the health bar                 -------
                 self.show_dino_opponent_options(new_robot_fighter, self.taunt)  # Pass the variables in
-            else:
-                self.winner = self.user_dinosaur.type
+            elif self.robot_fleet[self.opponent_current_position].name == "EndGame":
+                print("\nIt looks like all the robots have been annihilated!")
+                self.winner = "Dinosaurs"
                 self.display_winners()
 
+        #  The dinosaur's health is less than or equal to 0, and there are still dinosaurs in the herd
+        elif self.user_dinosaur.health <= 0 and self.dino_herd[self.user_current_position + 1].type != "EndGame":
+            print(f"It appears that {self.dino_herd[self.user_current_position].type} has fallen!")
+            self.user_current_position = self.user_current_position + 1
+            self.user_dinosaur = self.dino_herd[self.user_current_position]
+            self.user_dinosaur.health = 25  # Update the health bar                 -------
+            print("Don't worry! There are still dinos in your herd!")
+            print(f"The next dino up to bat is: {self.user_dinosaur.type}")
+            self.taunt = False
+            self.current_robot_opponent.health = 25  # Update the health bar                 -------
+            self.show_dino_opponent_options(self.current_robot_opponent, self.taunt)
+
         #  The dinosaur's health is less than or equal to 0, END GAME
-        elif self.user_dinosaur.health <= 0:
-            print("\nLooks like you lost, bud! Try again next time.")
-            self.winner = self.current_robot_opponent.name
+        elif self.user_dinosaur.health <= 0 and self.dino_herd[self.user_current_position + 1].type == "EndGame":
+            print("\nLooks like you you're out of dinosaurs, bud! Try again next time.")
+            self.winner = "Robots"
             self.display_winners()
     # endregion
 
@@ -433,24 +448,37 @@ class BattleField:
         elif self.current_robot_opponent.health <= 0 and self.user_dinosaur.health > 0:
             #  Notify the user that the robot is destroyed and find the next one.
             print("The robot has been destroyed! On to the next one!")
-            self.user_current_position = self.user_current_position + 1  # Get the next position
+            self.opponent_current_position = self.opponent_current_position + 1  # Get the next position
 
             #  Create a new robot contender, only if the current position is less than the size of fleet
-            if self.user_current_position < len(self.robot_fleet):
-                new_robot_fighter = self.new_robot_opponent(self.user_current_position)
-                self.taunt == False  # Update the taunt to False
-                self.user_dinosaur.health = 100  # Update the health bar
+            if self.opponent_current_position < len(self.robot_fleet) \
+                    and self.robot_fleet[self.opponent_current_position].name != "EndGame":
+                new_robot_fighter = self.new_robot_opponent(self.opponent_current_position)
+                self.taunt = False  # Update the taunt to False
+                self.user_dinosaur.health = 25  # Update the health bar                 -------
                 self.show_dino_opponent_options(new_robot_fighter, self.taunt)  # Pass the variables in
-            else:
-                self.winner = self.user_dinosaur.type
+            elif self.robot_fleet[self.opponent_current_position].name == "EndGame":
+                print("\nIt looks like all the robots have been annihilated!")
+                self.winner = "Dinosaurs"
                 self.display_winners()
 
-        #  The dinosaur's health is less than or equal to 0, END GAME
-        elif self.user_dinosaur.health <= 0:
-            print("\nLooks like you lost, bud! Try again next time.")
-            self.winner = self.current_robot_opponent.name
-            self.display_winners()
+        #  The dinosaur's health is less than or equal to 0, and there are still dinosaurs in the herd
+        elif self.user_dinosaur.health <= 0 and self.dino_herd[self.user_current_position + 1].type != "EndGame":
+            print(f"It appears that {self.dino_herd[self.user_current_position].type} has fallen!")
+            self.user_current_position = self.user_current_position + 1
+            self.user_dinosaur = self.dino_herd[self.user_current_position]
+            self.user_dinosaur.health = 25  # Update the health bar                 -------
+            print("Don't worry! There are still dinos in your herd!")
+            print(f"The next dino up to bat is: {self.user_dinosaur.type}")
+            self.taunt = False
+            self.current_robot_opponent.health = 25  # Update the health bar                 -------
+            self.show_dino_opponent_options(self.current_robot_opponent, self.taunt)
 
+        #  The dinosaur's health is less than or equal to 0, END GAME
+        elif self.user_dinosaur.health <= 0 and self.dino_herd[self.user_current_position + 1].type == "EndGame":
+            print("\nLooks like you you're out of dinosaurs, bud! Try again next time.")
+            self.winner = "Robots"
+            self.display_winners()
     # endregion
 
     # region New Robot Fleet()

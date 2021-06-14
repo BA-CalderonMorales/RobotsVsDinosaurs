@@ -11,8 +11,8 @@ class Herd:
     def create_herd(self):
         """Create herd of dinosaurs"""
         herd_of_dinos = list()
-        all_types = ["Raptor", "Triceratops", "Tyrannosaurus", "Spinosaurus"]
-        power_level = [80, 85, 90, 100]
+        all_types = ["Raptor", "Triceratops", "Tyrannosaurus", "Spinosaurus", "EndGame"]
+        power_level = [80, 85, 90, 100, 0]
         for index in range(0, len(all_types)):
             herd_of_dinos.append(Dinosaur(all_types[index], power_level[index]))
         return herd_of_dinos

@@ -9,7 +9,7 @@ class Robot:
     def __init__(self, name):
         self.name = name
         self.power_level = 100
-        self.health = 100
+        self.health = 25
         self.weapon = self.random_weapon()
     # endregion
 
