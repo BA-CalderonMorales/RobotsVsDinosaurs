@@ -4,9 +4,16 @@ from battlefield import BattleField
 from dinosaur import Dinosaur
 from robot import Robot
 
+print("\n\n*******************************************************\n")
+
+# region Proper Instantiation - BattleField class
+
 new_game = BattleField() # Creates a new instance of the game
 new_game.run_game() # Runs the game
 
+# endregion
+
+print("\n*******************************************************\n")
 print("\n*******************************************************\n")
 
 # region Proper Instantiation - Dinosaur, Weapon, and Robot classes
@@ -77,24 +84,6 @@ print(fleet_one)
 herd_one = herd.Herd()
 print(herd_one)
 """
-
-# endregion
-
-# region Proper Instantiation - Battlefield
-"""
-In this region, you can see how I've set up all the 
-game components regarding how everything is suppose
-to play out in a game level. Currently, the game
-is running on one level. 
-"""
-
-""" 
-Uncomment the content below to see what each component
-of the game is suppose to do.
-"""
-
-
-
 
 # endregion
 

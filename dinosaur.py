@@ -1,11 +1,3 @@
-# from robot import Robot
-# region Line 1 explanation
-"""... imports working differently here
-Uncomment top line to see that using from robot import Robot
-is unnecessary for the rest of code to work.
-"""
-# endregion
-
 # region Dinosaur class
 class Dinosaur:
     # region Constructor
